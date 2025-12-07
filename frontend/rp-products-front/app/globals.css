@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* 🌤️ MODO CLARO */
+:root {
+  --background: #f4f2ff;        /* Lilás claríssimo */
+  --foreground: #1a1a1a;        /* Grafite elegante */
+
+  --primary: #5b4bff;           /* Roxo vibrante */
+  --secondary: #7f89ff;         /* Roxo pastel */
+  --accent: #ffd369;            /* Amarelo suave para destaque */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* 🌑 MODO ESCURO */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f0b22;      /* Roxo escuro profundo */
+    --foreground: #e9e9f7;      /* Off-white suave */
+
+    --primary: #7c6bff;         /* Roxo mais claro */
+    --secondary: #9da7ff;       /* Lilás suave */
+    --accent: #ffe08a;          /* Amarelo/amêndoa */
+  }
+}
+
+/* 🌐 ESTILIZAÇÃO GLOBAL */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+@import "tailwindcss";
+
+/* 🌤️ MODO CLARO */
+:root {
+  --background: #ffffff;        /* Fundo branco por enquanto */
+  --foreground: #1a1a1a;        /* Grafite elegante */
+
+  --primary: #5b4bff;           /* Roxo vibrante */
+  --secondary: #7f89ff;         /* Roxo pastel */
+  --accent: #ffd369;            /* Amarelo suave para destaque */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* 🌑 MODO ESCURO */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f0b22;      /* Roxo escuro profundo */
+    --foreground: #e9e9f7;      /* Off-white suave */
+
+    --primary: #7c6bff;         /* Roxo mais claro */
+    --secondary: #9da7ff;       /* Lilás suave */
+    --accent: #ffe08a;          /* Amarelo/amêndoa */
+  }
+}
+
+/* 🌐 ESTILIZAÇÃO GLOBAL */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.25s ease, color 0.25s ease;
+}
