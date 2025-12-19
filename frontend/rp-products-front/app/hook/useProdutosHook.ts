@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import {ClienteService } from "../api/clientesApiService";
-import { Cliente } from "../interfaces/clientes-interface";
+import { Produto } from "../interfaces/produtos-interface";
+import { ProdutoService } from "../api/produtosApiService";
 
-const service = new ClienteService();
+const service = new ProdutoService();
 
-export function useClientes() {
-  const [clientes, setClientes] = useState<Cliente[]>([]);
+export function useProdutos() {
+  const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,55 +15,55 @@ export function useClientes() {
 
   useEffect(() => {
     mounted.current = true;
-    fetchClientes();
+    fetchProdutos();
     return () => {
       mounted.current = false;
     };
   }, []);
 
-  const fetchClientes = useCallback(async () => {
+  const fetchProdutos = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await service.fetchClientes();
-      if (mounted.current) setClientes(data);
+      const data = await service.fetchProdutos();
+      if (mounted.current) setProdutos(data);
     } catch (err: any) {
       console.error(err);
       if (mounted.current)
-        setError(err.message || "Erro ao carregar clientes");
+        setError(err.message || "Erro ao carregar produtos");
     } finally {
       if (mounted.current) setLoading(false);
     }
   }, []);
 
-  const addCliente = useCallback(async (c: Omit<Cliente, "id">) => {
+  const addProduto = useCallback(async (p: Omit<Produto, "id">) => {
     setLoading(true);
     setError(null);
 
     try {
-      const novo = await service.createCliente(c);
-      if (mounted.current) setClientes(prev => [...prev, novo]);
+      const novo = await service.createProduto(p);
+      if (mounted.current) setProdutos(prev => [...prev, novo]);
       return novo;
     } catch (err: any) {
       console.error(err);
       if (mounted.current)
-        setError(err.message || "Erro ao adicionar cliente");
+        setError(err.message || "Erro ao adicionar produto");
       throw err;
     } finally {
       if (mounted.current) setLoading(false);
     }
   }, []);
 
-  const updateCliente = useCallback(
-    async (id: string, c: Omit<Cliente, "id">) => {
+  const updateProduto = useCallback(
+    async (id: string, p: Omit<Produto, "id">) => {
       setLoading(true);
       setError(null);
 
       try {
-        const atualizado = await service.updateCliente(id, c);
+        const atualizado = await service.updateProduto(id, p);
         if (mounted.current && atualizado) {
-          setClientes(prev =>
+          setProdutos(prev =>
             prev.map(item => (item.id === id ? atualizado : item))
           );
         }
@@ -71,7 +71,7 @@ export function useClientes() {
       } catch (err: any) {
         console.error(err);
         if (mounted.current)
-          setError(err.message || "Erro ao atualizar cliente");
+          setError(err.message || "Erro ao atualizar produto");
         return null;
       } finally {
         if (mounted.current) setLoading(false);
@@ -80,18 +80,18 @@ export function useClientes() {
     []
   );
 
-  const removeCliente = useCallback(async (id: string) => {
+  const removeProduto = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      await service.deleteCliente(id);
+      await service.deleteProduto(id);
       if (mounted.current)
-        setClientes(prev => prev.filter(item => item.id !== id));
+        setProdutos(prev => prev.filter(item => item.id !== id));
     } catch (err: any) {
       console.error(err);
       if (mounted.current)
-        setError(err.message || "Erro ao remover cliente");
+        setError(err.message || "Erro ao remover produto");
       throw err;
     } finally {
       if (mounted.current) setLoading(false);
@@ -99,12 +99,12 @@ export function useClientes() {
   }, []);
 
   return {
-    clientes,
+    produtos,
     loading,
     error,
-    fetchClientes,
-    addCliente,
-    updateCliente,
-    removeCliente,
+    fetchProdutos,
+    addProduto,
+    updateProduto,
+    removeProduto,
   };
 }

@@ -1,23 +1,18 @@
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+// ../ui/Input.tsx
+"use client";
+import React, { InputHTMLAttributes } from "react";
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
 }
 
 export default function Input({ label, ...props }: InputProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium text-black">{label}</label>
-      
+    <div className="flex flex-col">
+      {label && <label className="text-sm font-medium text-gray-700 mb-1">{label}</label>}
       <input
         {...props}
-        className="
-          w-full rounded-md border border-zinc-300 px-3 py-2 text-sm
-          bg-white
-          text-black                     /* 🖤 TEXTO PRETO */
-          placeholder:text-zinc-500       /* placeholder cinza suave */
-          focus:border-primary
-          focus:outline-none
-          transition
-        "
+        className="border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
   );

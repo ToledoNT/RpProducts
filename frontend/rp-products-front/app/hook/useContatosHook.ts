@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import {ClienteService } from "../api/clientesApiService";
-import { Cliente } from "../interfaces/clientes-interface";
+import { Contato } from "../interfaces/contatos-interface";
+import { ContatoService } from "../api/contatoApiService";
 
-const service = new ClienteService();
+const service = new ContatoService();
 
-export function useClientes() {
-  const [clientes, setClientes] = useState<Cliente[]>([]);
+export function useContatos() {
+  const [contatos, setContatos] = useState<Contato[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,63 +15,63 @@ export function useClientes() {
 
   useEffect(() => {
     mounted.current = true;
-    fetchClientes();
+    fetchContatos();
     return () => {
       mounted.current = false;
     };
   }, []);
 
-  const fetchClientes = useCallback(async () => {
+  const fetchContatos = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await service.fetchClientes();
-      if (mounted.current) setClientes(data);
+      const data = await service.fetchContatos();
+      if (mounted.current) setContatos(data);
     } catch (err: any) {
       console.error(err);
       if (mounted.current)
-        setError(err.message || "Erro ao carregar clientes");
+        setError(err.message || "Erro ao carregar contatos");
     } finally {
       if (mounted.current) setLoading(false);
     }
   }, []);
 
-  const addCliente = useCallback(async (c: Omit<Cliente, "id">) => {
+  const addContato = useCallback(async (c: Omit<Contato, "id">) => {
     setLoading(true);
     setError(null);
 
     try {
-      const novo = await service.createCliente(c);
-      if (mounted.current) setClientes(prev => [...prev, novo]);
+      const novo = await service.createContato(c);
+      if (mounted.current) setContatos((prev) => [...prev, novo]);
       return novo;
     } catch (err: any) {
       console.error(err);
       if (mounted.current)
-        setError(err.message || "Erro ao adicionar cliente");
+        setError(err.message || "Erro ao adicionar contato");
       throw err;
     } finally {
       if (mounted.current) setLoading(false);
     }
   }, []);
 
-  const updateCliente = useCallback(
-    async (id: string, c: Omit<Cliente, "id">) => {
+  const updateContato = useCallback(
+    async (id: string, c: Omit<Contato, "id">) => {
       setLoading(true);
       setError(null);
 
       try {
-        const atualizado = await service.updateCliente(id, c);
+        const atualizado = await service.updateContato(id, c);
         if (mounted.current && atualizado) {
-          setClientes(prev =>
-            prev.map(item => (item.id === id ? atualizado : item))
+          setContatos((prev) =>
+            prev.map((item) => (item.id === id ? atualizado : item))
           );
         }
         return atualizado;
       } catch (err: any) {
         console.error(err);
         if (mounted.current)
-          setError(err.message || "Erro ao atualizar cliente");
+          setError(err.message || "Erro ao atualizar contato");
         return null;
       } finally {
         if (mounted.current) setLoading(false);
@@ -80,18 +80,18 @@ export function useClientes() {
     []
   );
 
-  const removeCliente = useCallback(async (id: string) => {
+  const removeContato = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      await service.deleteCliente(id);
+      await service.deleteContato(id);
       if (mounted.current)
-        setClientes(prev => prev.filter(item => item.id !== id));
+        setContatos((prev) => prev.filter((item) => item.id !== id));
     } catch (err: any) {
       console.error(err);
       if (mounted.current)
-        setError(err.message || "Erro ao remover cliente");
+        setError(err.message || "Erro ao remover contato");
       throw err;
     } finally {
       if (mounted.current) setLoading(false);
@@ -99,12 +99,12 @@ export function useClientes() {
   }, []);
 
   return {
-    clientes,
+    contatos,
     loading,
     error,
-    fetchClientes,
-    addCliente,
-    updateCliente,
-    removeCliente,
+    fetchContatos,
+    addContato,
+    updateContato,
+    removeContato,
   };
 }

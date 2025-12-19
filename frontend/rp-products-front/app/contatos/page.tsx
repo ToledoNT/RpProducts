@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Button from "../components/ui/Button";
-import ClienteForm from "../components/clientes/ClienteForm";
 import {
   Search,
   UserPlus,
@@ -11,27 +10,31 @@ import {
   Edit2,
   Trash2,
 } from "lucide-react";
-import { useClientes } from "../hook/useClientesHook";
-import { Cliente } from "../interfaces/clientes-interface";
+import { Contato } from "../interfaces/contatos-interface";
+import { useContatos } from "../hook/useContatosHook";
+import ContatoForm from "../components/contatos/contatoForm";
 
-export default function ClientesPage() {
+export default function ContatosPage() {
   const [abrirForm, setAbrirForm] = useState(false);
   const [busca, setBusca] = useState("");
 
+  // 🔒 placeholder temporário
+  const clienteId = "SEM_CLIENTE"; 
+
   const {
-    clientes,
+    contatos,
     loading,
     error,
-    addCliente,
-    updateCliente,
-    removeCliente,
-  } = useClientes();
+    addContato,
+    updateContato,
+    removeContato,
+  } = useContatos();
 
-  const clientesFiltrados = clientes.filter(
+  const contatosFiltrados = contatos.filter(
     (c) =>
       c.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      c.telefone.includes(busca) ||
-      c.email.toLowerCase().includes(busca.toLowerCase())
+      (c.telefone ?? "").includes(busca) ||
+      (c.email ?? "").toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
@@ -45,23 +48,23 @@ export default function ClientesPage() {
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Clientes
+                Contatos
               </h1>
               <p className="text-gray-600">
-                Gerencie os clientes cadastrados
+                Gerencie os contatos cadastrados
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span className="px-2 py-1 bg-gray-100 rounded-md">
-              {clientes.length}{" "}
-              {clientes.length === 1 ? "cliente" : "clientes"}
+              {contatos.length}{" "}
+              {contatos.length === 1 ? "contato" : "contatos"}
             </span>
 
             {busca && (
               <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md">
-                {clientesFiltrados.length} encontrado(s)
+                {contatosFiltrados.length} encontrado(s)
               </span>
             )}
           </div>
@@ -79,7 +82,7 @@ export default function ClientesPage() {
           ) : (
             <>
               <UserPlus className="w-5 h-5" />
-              Novo Cliente
+              Novo Contato
             </>
           )}
         </Button>
@@ -103,26 +106,29 @@ export default function ClientesPage() {
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         {abrirForm ? (
           <div className="p-6">
-            <ClienteForm onSave={addCliente} />
+            <ContatoForm
+              onSave={addContato}
+              clienteId={clienteId} // ✅ agora não quebra
+            />
           </div>
         ) : loading ? (
           <div className="flex flex-col items-center justify-center py-16">
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <p className="text-gray-600">Carregando clientes...</p>
+            <p className="text-gray-600">Carregando contatos...</p>
           </div>
-        ) : clientesFiltrados.length === 0 ? (
+        ) : contatosFiltrados.length === 0 ? (
           <div className="text-center py-16">
             <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900">
               {busca
-                ? "Nenhum cliente encontrado"
-                : "Nenhum cliente cadastrado"}
+                ? "Nenhum contato encontrado"
+                : "Nenhum contato cadastrado"}
             </h3>
           </div>
         ) : (
-          <ClientesTabela
-            clientes={clientesFiltrados}
-            onDelete={removeCliente}
+          <ContatosTabela
+            contatos={contatosFiltrados}
+            onDelete={removeContato}
           />
         )}
       </div>
@@ -131,14 +137,14 @@ export default function ClientesPage() {
 }
 
 /* ---------------------------------------------------------
-   Tabela de Clientes
+   Tabela de Contatos
 --------------------------------------------------------- */
-interface ClientesTabelaProps {
-  clientes: Cliente[];
+interface ContatosTabelaProps {
+  contatos: Contato[];
   onDelete: (id: string) => void;
 }
 
-function ClientesTabela({ clientes, onDelete }: ClientesTabelaProps) {
+function ContatosTabela({ contatos, onDelete }: ContatosTabelaProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -160,17 +166,21 @@ function ClientesTabela({ clientes, onDelete }: ClientesTabelaProps) {
         </thead>
 
         <tbody>
-          {clientes.map((cliente, idx) => (
+          {contatos.map((contato, idx) => (
             <tr
-              key={cliente.id}
+              key={contato.id}
               className={`border-b ${
                 idx % 2 === 0 ? "bg-white" : "bg-gray-50"
               } hover:bg-blue-50`}
             >
-              <td className="py-4 px-6">{cliente.nome}</td>
-              <td className="py-4 px-6">{cliente.telefone}</td>
+              <td className="py-4 px-6">{contato.nome}</td>
+              <td className="py-4 px-6">{contato.telefone}</td>
               <td className="py-4 px-6 text-blue-600 underline">
-                <a href={`mailto:${cliente.email}`}>{cliente.email}</a>
+                {contato.email && (
+                  <a href={`mailto:${contato.email}`}>
+                    {contato.email}
+                  </a>
+                )}
               </td>
               <td className="py-4 px-6 flex gap-2">
                 <button className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg flex items-center gap-1">
@@ -179,7 +189,7 @@ function ClientesTabela({ clientes, onDelete }: ClientesTabelaProps) {
                 </button>
 
                 <button
-                  onClick={() => cliente.id && onDelete(cliente.id)}
+                  onClick={() => contato.id && onDelete(contato.id)}
                   className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg flex items-center gap-1"
                 >
                   <Trash2 className="w-4 h-4" />
